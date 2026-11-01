@@ -1,6 +1,6 @@
 #include "kernels.h"
 
-size_t min_size(size_t a, size_t b) {
+static size_t min_size(size_t a, size_t b) {
     return (a < b) ? a : b;
 }
 void gemm_tiled(const float *a, const float *b, float *c,

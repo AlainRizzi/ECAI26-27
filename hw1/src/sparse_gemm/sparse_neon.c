@@ -11,10 +11,8 @@ int gemm_sparse_neon(const float *a, const sparse_weights *w, float *c, size_t m
        vdupq_n_f32, load four adjacent block values with vld1q_f32, and use
        vfmaq_f32. Store once with vst1q_f32. See gemm_sparse_scalar for the
        compressed-column traversal and preserve the same block ordering. */
-    size_t i = 0;
-    for (; i + 4 <= m; i += 4){
-        size_t g = 0;
-        for(; g + 4 <= w->n/4; g += 4){
+    for (size_t i = 0; i < m; ++i){
+        for(size_t g = 0; g < w->n/4; ++g){
             float32x4_t acc = vdupq_n_f32(0.0f);
             for(size_t p = w->block_col_ptr[g]; p < w->block_col_ptr[g+1]; ++p){
                 size_t k0 = 4 * (size_t)w->block_row_idx[p];

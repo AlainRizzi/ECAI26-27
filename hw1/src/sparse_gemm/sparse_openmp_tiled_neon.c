@@ -27,15 +27,11 @@ int gemm_sparse_openmp_tiled_neon(const float *a, const sparse_weights *w,
             for(size_t p = w->block_col_ptr[g]; p < w->block_col_ptr[g+1]; ++p){
                 size_t k0 = 4 * (size_t)w->block_row_idx[p];
                 for (size_t r = 0; r < 4; ++r) {
-                    float32x4_t A1 = vdupq_n_f32(a[i * w->k + k0 + r]);
-                    float32x4_t A2 = vdupq_n_f32(a[(i+1) * w->k + k0 + r]);
-                    float32x4_t A3 = vdupq_n_f32(a[(i+2) * w->k + k0 + r]);
-                    float32x4_t A4 = vdupq_n_f32(a[(i+3) * w->k + k0 + r]);
                     float32x4_t W = vld1q_f32(&w->block_values[16 * p + 4 * r]);
-                    acc1 = vfmaq_f32(acc1, A1, W);
-                    acc2 = vfmaq_f32(acc2, A2, W);
-                    acc3 = vfmaq_f32(acc3, A3, W);
-                    acc4 = vfmaq_f32(acc4, A4, W);
+                    acc1 = vfmaq_f32(acc1, vdupq_n_f32(a[i * w->k + k0 + r]), W);
+                    acc2 = vfmaq_f32(acc2, vdupq_n_f32(a[(i+1) * w->k + k0 + r]), W);
+                    acc3 = vfmaq_f32(acc3, vdupq_n_f32(a[(i+2) * w->k + k0 + r]), W);
+                    acc4 = vfmaq_f32(acc4, vdupq_n_f32(a[(i+3) * w->k + k0 + r]), W);
                 }
             }
             vst1q_f32(&c[i * w->n + 4 * g], acc1);

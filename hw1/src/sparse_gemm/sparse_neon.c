@@ -17,8 +17,7 @@ int gemm_sparse_neon(const float *a, const sparse_weights *w, float *c, size_t m
             for(size_t p = w->block_col_ptr[g]; p < w->block_col_ptr[g+1]; ++p){
                 size_t k0 = 4 * (size_t)w->block_row_idx[p];
                 for (size_t r = 0; r < 4; ++r) {
-                    float32x4_t A = vdupq_n_f32(a[i * w->k + k0 + r]);
-                    acc = vfmaq_f32(acc, A, vld1q_f32(&w->block_values[16 * p + 4 * r]));
+                    acc = vfmaq_f32(acc, vdupq_n_f32(a[i * w->k + k0 + r]), vld1q_f32(&w->block_values[16 * p + 4 * r]));
                 }
             }
             vst1q_f32(&c[i * w->n + 4 * g], acc);

@@ -48,4 +48,4 @@ if __name__ == '__main__':
     server = ls.LitServer(
         api, accelerator='cpu', devices=1, workers_per_device=1
     )
-    server.run(port=8000)
+    server.run(port=8080)
